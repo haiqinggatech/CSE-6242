@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>
+		Q3 D3 hzhu349
+	</title>
+	<style>
+
+	body {
+  font: 10px sans-serif;
+  margin: 0;
+}
+
+
+.axis line, 
+.axis path { 
+  fill: none;
+  stroke: #000;
+  shape-rendering: crispEdges;
+}
+
+.text {
+  stroke: #000;
+  stroke-opacity: .4;
+}
+
+.circles {
+  stroke: #000;
+  stroke-opacity: .4;
+}
+
+
+</style>
+
+</head>
+<body>
+	<script type="text/javascript" src="d3\d3.v3.min.js"></script>
+
+	<script type="text/javascript">
+		var dataset = [];
+
+		var padding = 5;
+		for (var i = 0; i < 100; i++) {
+			var data1 = (Math.random() * 240)+10;
+			var data2 = (Math.random() * 240)+10;
+			dataset.push([data1,data2]);
+		}
+
+
+
+
+
+
+		var margin ={top:50,right:50,bottom:100,left:50};
+		var width = 800 - margin.left - margin.right;
+		var height = 600 - margin.top - margin.bottom;
+
+
+
+
+		var svg = d3.select("body")
+		.append("svg")
+        .attr("width", width + margin.left + margin.right)
+        .attr("height", height + margin.top + margin.bottom)
+    	.append("g")
+        .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+
+		svg.append("text")
+        .attr("x", width / 2)             
+        .attr("y", 30)
+        .attr("text-anchor", "middle")  
+        .style("font-size", "24px") 
+        .style("text-decoration", "underline")  
+        .text("hzhu349");
+
+
+		var g = svg.append("g")
+		 .attr("transform","translate("+margin.left+","+margin.top+")");
+
+
+
+		var xAxis = d3.scale.linear()
+		.range([padding, width-padding])
+		.domain(d3.extent(dataset,function(d){return d[0]}));
+		
+        var meanData = d3.mean(dataset, function(d){return d[0]});
+		var minY = d3.min(dataset,function (d) {return d[1]});
+		var maxY = d3.max(dataset,function (d) {return d[1]});
+
+		var sizeScale = d3.scale.linear()
+		.range([1, 5])
+		.domain([0,maxY]);
+
+
+		var yAxis = d3.scale.linear()
+		.range([height-padding, padding])
+		.domain(d3.extent(dataset,function(d){return d[1]}));
+
+
+
+
+
+
+		g.selectAll("rect")
+			.data(dataset)
+			.enter()
+			.append("rect")
+			.attr("fill","none")
+			.attr("x",function(d){return xAxis(d[0])})
+			.attr("y",function(d){return yAxis(d[1])})
+			.attr("width", 2)
+			.attr("height",2)
+			.attr("stroke-opacity", 0.8)
+			.attr("stroke", function(d){
+				return colorData(d[0], meanData);
+				
+			})
+			
+
+
+
+	   
+		g.append("g")
+	      .attr("class", "x axis")
+	      .style("stroke-dasharray","2, 1")
+	      .attr("transform", "translate(0,"+height+")")
+	      .call(d3.svg.axis().scale(xAxis));
+
+	  	g.append("g")
+	      .attr("class", "y axis")
+	      .style("stroke-dasharray", "2, 1" )
+	      .call(d3.svg.axis().scale(yAxis).orient("left"))
+	      .attr("transform", "translate(0,0)");
+
+        g.append("text")
+	    	.text("Min Y:"+Math.round(minY))
+	    	.attr("x", function(d) { return xAxis(d[0][y.indexof(minY)]);})
+	    	.attr("y", function(d) { return yAxis(d[1][y.indexof(minY)]);})
+	    	.attr("font-family", "sans-serif")
+   			.attr("font-size", "24px")
+   			.attr("fill", "red");
+
+
+
+	    function colorData(data, datamean){
+        if(data > datamean){
+            return "blue";
+        }else{
+            return "green";
+        }
+   }
+
+	</script>
+	</body>
+</html>

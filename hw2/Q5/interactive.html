@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>hzhu349 Q5</title>
+</head>
+
+<style type="text/css">
+  .axis path,
+  .axis line {
+    fill: none;
+    stroke: white;
+    shape-rendering: crispEdges;
+  }
+  .cell {
+        stroke:white;
+        stroke-width:2px;   
+      }
+   .mono {
+        font-size: 9pt;
+        font-family: Consolas, courier;
+        font-weight:bold;
+        fill:black;
+      }
+   
+  .axis text {
+      font-family: Consolas;
+      font-size: 14px;
+    }
+  
+.title {
+  text-align: center;
+  padding-bottom: 20px;
+  font-size: 22px;
+  font-weight: 400;
+}
+
+.legend {
+            padding: 20px;
+            font: 20px sans-serif;
+            padding-bottom: 20px;
+            text-align: center;
+            stroke-width: 1px;
+            stroke:black;
+            fill:none ;
+
+
+            font-weight:bold;
+
+        }
+ .tick line {
+        display:none;
+    }
+
+
+.d3-tip {
+  line-height: .5;
+  font-weight: bold;
+  padding: 0px 8px;
+background: rgba(125, 125, 25, 0.8); 
+  color: #444;
+  border-radius: 10px;
+  border: 2px solid #444;
+}
+
+
+
+.body {
+  font-family: "Open Sans", sans-serif;
+  font-size: 20px;
+  background-color: #fff;
+  width: 960px;
+  height: 800px;
+  margin-top: 10px;
+  font-weight: bold
+  text-anchor:center;
+
+  
+
+}
+
+#charts{
+  float: left;
+}
+
+.chart {
+  height: 100px;
+  margin-bottom: 20px;
+}
+
+.reset {
+  padding-left: 1em;
+  font-size: smaller;
+  color: blue;
+}
+
+.county-borders {
+  fill: none;
+  stroke: #fff;
+  stroke-width: 0.5px;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+  pointer-events: none;
+}
+
+.path {
+  stroke: #fff;
+}
+
+
+
+</style>
+<body>
+<div  class= 'chart1'></div>
+<div   class= 'chart2'></div>
+
+<script src="../lib/d3.v3.min.js"></script>
+<script type="text/javascript">
+
+var svg = d3.select(".chart1")
+    .append("svg")
+        .attr("width", 710)
+        .attr("height", 600)
+ 
+var g1 = svg.append('g')
+    .attr("width", 300)
+    .attr("height", 500 )
+  .attr("transform",'translate(80,30)');
+
+var svg2=d3.select(".chart2")
+      .append("svg")
+        .attr("width", 710)
+        .attr("height", 600)
+
+var g2=svg2.append('g')
+      .attr("width", 300)
+      .attr("height", 500 )
+      .attr("transform",'translate(200,22)')
+      
+population = [{city: 'San Antonio', population_2012: 1383505, growth: {year_2013:25405, year_2014:26644 , year_2015:28593 , year_2016:23591 , year_2017:24208}},
+{city: 'New York', population_2012: 8383504, growth: {year_2013:75138 , year_2014:62493 , year_2015:61324 , year_2016:32967 , year_2017:7272}},
+{city: 'Chicago', population_2012: 2717989, growth: {year_2013:6493 , year_2014:2051 , year_2015:-1379 , year_2016:-4879 , year_2017:-3825}},
+{city: 'Los Angeles', population_2012: 3859267, growth:{year_2013:32516 , year_2014:30885 , year_2015:30791 , year_2016:27657 , year_2017:18643}},
+{city: 'Phoenix', population_2012: 1495880, growth: {year_2013:25302 , year_2014:26547 , year_2015:27310 , year_2016:27003 , year_2017:24036}}]
+
+population.sort(function(data1,data2){
+
+ return( data1.population_2012+data1.growth.year_2013+data1.growth.year_2014+data1.growth.year_2015+data1.growth.year_2016+data1.growth.year_2017)-(data2.population_2012+data2.growth.year_2013+data2.growth.year_2014+data2.growth.year_2015+data2.growth.year_2016+data2.growth.year_2017);
+   ;
+});
+
+
+xScale = d3.scale.linear()
+    .domain([0, d3.max(population, function(data1){
+      growth = data1.population_2012+data1.growth.year_2013+data1.growth.year_2014+data1.growth.year_2015+data1.growth.year_2016+data1.growth.year_2017
+        return growth;
+    })])
+    .range([0, 600]);
+
+    yScale = d3.scale.ordinal()
+    .domain(population.map(function(d){ return d.city;}))
+    .rangeBands([500,0]);
+
+     y = d3.svg.axis().scale(yScale)
+
+    .orient("left")
+
+g1.append("g").attr("class", "axis").call(y).attr("transform","translate(0,-10)");
+
+g1.selectAll(".domain").remove();
+
+         g1.selectAll("rect")
+            .data(population)
+            .enter()
+            .append('rect')
+            .attr('y',function(d){
+              return yScale(d.city)
+            })
+            .attr('width',function(data1){
+                    growth = data1.population_2012+data1.growth.year_2013+data1.growth.year_2014+data1.growth.year_2015+data1.growth.year_2016+data1.growth.year_2017
+              return xScale(growth);
+            })
+            .attr('height',50)
+            .attr('fill','#D3D3D3')
+            .on('mouseover',function(d){
+
+              temp =[
+                    {'x':'2013','y':(d.growth.year_2013/d.population_2012)*100},
+                    {'x':'2014','y':(d.growth.year_2014/(d.population_2012+d.growth.year_2013))*100},
+                    {'x':'2015','y':(d.growth.year_2015/(d.population_2012+d.growth.year_2013+d.growth.year_2014))*100},
+                    {'x':'2016','y':(d.growth.year_2016/(d.population_2012+d.growth.year_2013+d.growth.year_2014+d.growth.year_2015))*100},
+                    {'x':'2017','y':(d.growth.year_2017/(d.population_2012+d.growth.year_2013+d.growth.year_2014+d.growth.year_2015+d.growth.year_2016))*100}
+                  ]
+  
+             xScale = d3.scale.ordinal()
+                .domain(temp.map(function(d){ return d.x;}))
+                .rangeBands([0,500]);
+
+              yScale= d3.scale.linear()
+                      .domain(d3.extent(temp,function(d){return d.y}))
+                      .range([500,0]);
+
+                lineFunction = d3.svg.line()
+                  .x(function(d) { return xScale(d.x); })
+                  .y(function(d) { return yScale(d.y); })
+                  // .interpolate("basis");
+
+              d3.select(this).attr('fill','blue')
+ 
+
+              g2.append('path')
+                .data([temp])
+                .attr('class','legend')
+                .attr('d',lineFunction)
+
+         xAxis = d3.svg.axis().scale(xScale).orient("bottom")
+         yAxis = d3.svg.axis().scale(yScale).orient("left")
+
+        g2.append("g")
+          .attr("class", "legend")
+          .attr("transform", "translate(-50,499)")
+          .call(xAxis)
+
+        g2.append("g")
+          .attr("class", "legend")
+          .call(yAxis)
+
+
+        g2.append("text")
+            .attr("y", 0)
+            .attr("x", -60)
+            .attr('class','legend')
+            .text("Pct %");
+
+        g2.append("text")
+            .attr("y", 480)
+            .attr("x", 465)
+            .attr('class','legend')
+            .text("year");
+
+            })
+            .on('mouseout',function(d){
+              d3.select(this).attr("fill","#D3D3D3")
+              g2.selectAll(".legend").remove();
+            })
+
+
+
+     g1.append('g')
+      .selectAll("text")
+            .data(population)
+            .enter()
+            .append('text')
+            .attr("class","body")
+            .attr('y',function(d){
+              return yScale(d.city)+45
+            })
+            .text(function(data){
+              return (data.population_2012+data.growth.year_2013+data.growth.year_2014+data.growth.year_2015+data.growth.year_2016+data.growth.year_2017);
+            })
+            
+</script>
+</body>
+</html>

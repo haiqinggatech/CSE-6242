@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+    <!-- some front end javascript code idea is based on the work http://projectalexandria.net/, many extra functions are added by us
+	  Title: Project Alexandria source code
+	  Author: Nikhil Garg, Joseph Lubars, Chris Roberts, Gavin Sellers, Sean Steel, Ankit Tandon
+	  Date: 2015 or later
+	  Code Version: N/A
+	  Avaliability: http://projectalexandria.net/
+	-->
+    <head>
+        <meta charset="utf-8">
+        <title>Team55 - Find the Connected Movies</title>
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css">
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/uikit/2.22.0/css/uikit.min.css" />
+        <link rel="stylesheet" href="static/movie.css"> 
+
+    </head>
+
+    <body >
+      <div class="wrap" >
+	     <div class="movie_content_tab" >
+	      
+	          <div id="graph_stat" style= "text-align:center;display:none;"> <strong>Graph Statistics</strong></div>
+	          <div id="graph_node"></div>
+			<div id="graph_edge"></div>
+			<div id="top_movies"></div>
+	        
+			<br>
+			<br>
+			<div >
+	           <div id="movie_info" style="text-align:center;display:none;"><strong>Movie Infomration</strong></div>
+			   <br>
+			   <div class="movie_info" id="movie_info">
+                   
+                    <div id="movie_title"></div>
+					 <br>
+                    <div id="movie_director"></div>
+					 <br>
+					<div id="movie_actor"></div>
+					 <br>
+                    <div id="movie_length"></div>
+					 <br>
+					<div id="movie_year"></div>
+					
+					 <br>
+					<div id="movie_genre"></div>
+                    <br>
+					<div id="movie_rating"></div>
+                    <br>
+					<div id="movie_votes"></div>
+                    <br>
+                    <div id="tmdb_movie_link"></div>
+					 <br>
+					<div id="imdb_movie_link"></div>
+					 <br> 
+
+               </div>
+		    </div>
+	   </div>
+	   
+	      <div class="movie_graph"> 
+		  
+		  </div> 
+       <div class="input_movie_tab" >
+		   <h2 >Find Connected Movies</h2>
+		       <div class="form-group ">
+                    <input class="input-group" type="text" id = "movie_search" placeholder="Search for a moive title" style="padding-right:30px;">
+					  </br>
+                      <div class="alert alert-warning" id= "alertmsg" hidden>
+                           <strong>Moive Not Found!</strong>
+                       </div>
+               </div>
+			    </br>
+				 </br>
+			   <div class="form-group">
+            
+                 <div class="input-group" >
+				  <label for = "genres"> genres: <label>
+				  <select id = "genres"> 
+				      <option value="All" selected="selected"> all </option>
+				      <option value="Comedy">Comedy</option>
+                      <option value="Action">Action</option>
+                      <option value="Drama">Drama</option>
+                      <option value="Crime">Crime</option>
+				  </select>
+                 </div>
+               </div>
+			   </br>
+			   <div class="input-group" >
+				  <label for = "year"> year: <label>
+				  <select id = "year"> 
+				      <option value="all" selected="selected">all</option>
+				      <option value="5">last 5 years</option>
+                      <option value="20">last 20 years</option>
+                      <option value="50">last 50 years </option>
+                      
+				  </select>
+                 </div>
+			     </br>
+			     </br>
+                <div class="input-group" >
+				  <label for = "votes"> Votes: <label>
+				  <select id = "votes"> 
+				      <option value="all" selected="selected">all</option>
+				      <option value="l0">>10k</option>
+                      <option value="50">>50k</option>
+                      <option value="100">>100k </option>
+                      <option value="200">>200k</option>
+				  </select>
+                 </div>				
+		
+			     </br>
+			     </br>
+				   <div class="input-group" >
+				  <label for = "rating"> Rating: <label>
+				  <select id = "rating"> 
+				      <option value="all" selected="selected">all</option>
+				      <option value="6">>=6</option>
+                      <option value="7">>=7</option>
+                      <option value="8">>=8 </option>
+                      <option value="9">>=9</option>
+				  </select>
+                 </div>		
+				</br> 
+			   </br>
+			      <div class="input-group" >
+				  <label for = "conn"> New Connections: <label>
+				  <select id = "conn"> 
+				      <option value="9">9</option>
+				      <option value="8">8</option>
+				      <option value="7">7</option>
+                      <option value="6" selected="selected">6</option>
+                      <option value="5">5 </option>
+                      <option value="4">4</option>
+				  </select>
+				    </div>	
+			   </br>		
+			   </br>
+			   
+			   <div class="form-group">
+            
+                 <div class="input-group" >
+				    <button type="button" class="btn btn-primary" id ="explore" onclick = "search();" >Explore</button>
+                 </div>
+               </div>
+          </div>
+		<script src="static/jquery-3.3.1.min.js"></script>
+		 <script src="static/d3.v3.min.js"></script>
+		 <script src="static/d3-queue.v3.min.js"></script>
+		 <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.2/js/bootstrap.min.js"></script> 
+		 <script src="static/movie.js"></script>
+
+		  
+		</div>  
+
+    </body>
+</html>

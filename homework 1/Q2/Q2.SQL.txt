@@ -1,0 +1,261 @@
+-- Setup. DO NOT REMOVE.
+.headers on
+.separator ','
+
+DROP TABLE IF EXISTS movies;
+DROP TABLE IF EXISTS cast;
+DROP VIEW IF EXISTS good_collaboration;
+DROP TABLE IF EXISTS movie_overview;
+
+-- ***** ***** ***** ***** ***** ***** ***** ***** ***** ***** --
+
+-- (a.i) Create tables
+
+-- [insert your SQL statement(s) BELOW this line]
+
+Create table movies(
+id integer,
+name text,
+score integer
+);
+
+create table cast(
+movie_id integer,
+cast_id integer,
+cast_name text
+); 
+
+
+
+
+
+-- [insert your SQL statement(s) ABOVE this line]
+
+-- [the following statement(s) are for autograding. DO NOT REMOVE.]
+.tables
+.print '~~~~~'
+
+-- ***** ***** ***** ***** ***** ***** ***** ***** ***** ***** --
+
+-- (a.ii) Import data
+
+-- [insert your SQLite command(s) BELOW this line]
+
+.import movie-name-score.txt movies
+.import movie-cast.txt cast
+
+-- [insert your SQLite command(s) ABOVE this line]
+
+-- [the following statement(s) are for autograding. DO NOT REMOVE.]
+.headers off
+SELECT COUNT(*) FROM movies;
+SELECT COUNT(*) FROM cast;
+.headers on
+.print '~~~~~'
+
+-- ***** ***** ***** ***** ***** ***** ***** ***** ***** ***** --
+
+-- (b) Create indexes
+
+-- [insert your SQL statement(s) BELOW this line]
+CREATE INDEX scores_index ON movies (score);
+CREATE INDEX cast_index ON cast (cast_id);
+CREATE INDEX movie_index ON movies (id);
+
+
+-- [insert your SQL statement(s) ABOVE this line]
+
+-- [the following statement(s) are for autograding. DO NOT REMOVE.]
+.indexes
+.print '~~~~~'
+
+-- ***** ***** ***** ***** ***** ***** ***** ***** ***** ***** --
+
+-- (c) Calculate average score
+
+-- [insert your SQL statement(s) BELOW this line]
+
+SELECT avg(score) as average_score FROM movies  WHERE score >=5;
+
+
+-- [insert your SQL statement(s) ABOVE this line]
+
+-- [the following statement(s) are for autograding. DO NOT REMOVE.]
+.print '~~~~~'
+
+-- ***** ***** ***** ***** ***** ***** ***** ***** ***** ***** --
+
+-- (d) Find poor movies
+
+-- [insert your SQL statement(s) BELOW this line]
+SELECT * FROM movies
+
+ORDER BY score ASC,name ASC
+
+LIMIT 5;
+
+
+
+-- [insert your SQL statement(s) ABOVE this line]
+
+-- [the following statement(s) are for autograding. DO NOT REMOVE.]
+.print '~~~~~'
+
+-- ***** ***** ***** ***** ***** ***** ***** ***** ***** ***** --
+
+-- (e) Find laid back actors
+
+-- [insert your SQL statement(s) BELOW this line]
+
+
+SELECT cast_id,cast_name,COUNT(movie_id) AS movie_count FROM cast
+GROUP BY cast_id, cast_name
+HAVING movie_count=2
+
+ORDER BY cast_name ASC
+
+LIMIT 10;
+
+
+-- [insert your SQL statement(s) ABOVE this line]
+
+-- [the following statement(s) are for autograding. DO NOT REMOVE.]
+.print '~~~~~'
+
+-- ***** ***** ***** ***** ***** ***** ***** ***** ***** ***** --
+
+-- (f) Get high scoring actors
+
+-- [insert your SQL statement(s) BELOW this line]
+
+
+
+SELECT cast_id, cast_name, AVG (score)  AS average_score FROM cast 
+
+INNER JOIN movies ON movie_id = id
+
+WHERE cast_id IN (
+
+    SELECT cast_id FROM cast 
+
+    INNER JOIN movies
+
+    WHERE id = movie_id
+
+    GROUP BY cast_id
+
+    HAVING count(cast_id) > 2
+
+)
+
+AND score >= 40
+
+GROUP BY cast_id
+
+ORDER BY  AVG (score) DESC,  cast_name ASC
+
+LIMIT 10;
+
+
+-- [insert your SQL statement(s) ABOVE this line]
+
+-- [the following statement(s) are for autograding. DO NOT REMOVE.]
+.print '~~~~~'
+
+-- ***** ***** ***** ***** ***** ***** ***** ***** ***** ***** --
+
+-- (g) Creating views
+
+-- [insert your SQL statement(s) BELOW this line]
+CREATE VIEW good_collaboration AS
+
+   
+
+CREATE VIEW good_collaboration as 
+
+	SELECT cast_id1, cast_id2, avg(score) as avg_movie_score, count(*) as movie_count
+
+	FROM (SELECT movie_id as movieid1, cast_id as cast_id1 from cast)
+
+	JOIN (SELECT movie_id as movieid2, cast_id as cast_id2 from cast) on movieid1 = movieid2
+
+	JOIN movies on id = movieid1
+
+	WHERE cast_id1 != cast_id2
+
+	GROUP by cast_id1,cast_id2
+
+	HAVING count(*) > 2 AND avg(score) >=50;
+
+-- [insert your SQL statement(s) ABOVE this line]
+
+-- [the following statement(s) are for autograding. DO NOT REMOVE.]
+.headers off
+PRAGMA table_info(good_collaboration);
+SELECT AVG(average_movie_score) FROM good_collaboration;
+.headers on
+.print '~~~~~'
+
+-- ***** ***** ***** ***** ***** ***** ***** ***** ***** ***** --
+
+-- (h) Find the best collaborators
+
+-- [insert your SQL statement(s) BELOW this line]
+
+
+SELECT cast_id1 as cast_id, cast_name, avg(avg_movie_score) as collaboration_score
+
+	FROM good_collaboration 
+
+	JOIN (SELECT cast_id , cast_name from cast) on cast_id = cast_id1
+
+	GROUP by cast_id1
+
+	ORDER by avg(avg_movie_score) DESC
+
+	LIMIT 5;
+
+-- [insert your SQL statement(s) ABOVE this line]
+
+-- [the following statement(s) are for autograding. DO NOT REMOVE.]
+.print '~~~~~'
+
+-- ***** ***** ***** ***** ***** ***** ***** ***** ***** ***** --
+
+-- (i) Create FTS table and import data
+
+-- [insert your SQL statement(s) BELOW this line]
+
+CREATE VIRTUAL TABLE movie_overview USING fts3(id integer, name text, year integer, overview text, popularity decimal);
+
+.import movie_overview.txt movie_overview;
+-- [insert your SQL statement(s) ABOVE this line]
+
+-- ***** ***** ***** ***** ***** ***** ***** ***** ***** ***** --
+
+-- (i.1) Count movies with "fight"
+
+-- [insert your SQL statement(s) BELOW this line]
+
+SELECT count(overview) as count_overview FROM movie_overview WHERE overview MATCH 'fight';
+ 
+-- [insert your SQL statement(s) ABOVE this line]
+
+-- [the following statement(s) are for autograding. DO NOT REMOVE.]
+.print '~~~~~'
+
+-- ***** ***** ***** ***** ***** ***** ***** ***** ***** ***** --
+
+-- (i.2) List movies with "love" and "story" nearby
+
+-- [insert your SQL statement(s) BELOW this line]
+
+
+SELECT id FROM movie_overview WHERE overview MATCH "love NEAR/5 story";
+
+-- [insert your SQL statement(s) ABOVE this line]
+
+-- [the following statement(s) are for autograding. DO NOT REMOVE.]
+.print '~~~~~'
+
+-- ***** ***** ***** ***** ***** ***** ***** ***** ***** ***** --

@@ -1,0 +1,74 @@
+
+.node {
+    fill: #ccc;
+    stroke: #fff;
+    stroke-width: 2px;
+	cursor:pointer;
+}
+
+.link {
+    stroke: #777;
+    stroke-width: 5px;
+	cursor:pointer;
+}
+
+html,body {
+  height:100%;
+  overflow:hidden;
+}
+
+circle.high {
+  stroke: yellow;
+  stroke-width: 4px;
+}
+
+.wrap{
+  display:flex;
+  display:-webkit-flex;
+  flex-wrap: nowrap;
+  height:100%;
+  width:100%;
+}
+
+.wrap .movie_graph {
+
+  height:100%;
+  min-width:800px;
+
+}
+.wrap .movie_content_tab {
+
+  padding:15px;
+  background-color:#f2a221;
+  color:black;
+  height:100%;
+  min-width:300px;
+  padding-bottom:30px;
+  text-align: left;
+
+}
+
+.wrap .input_movie_tab {
+
+  padding:15px;
+  background-color:#20f135;
+  color:black;
+  height:100%;
+  min-width:300px;
+  padding-bottom:30px;
+  text-align: center;
+
+
+}
+
+.invislink {
+  cursor:pointer;
+}
+
+.format {
+	stroke: black;
+	stroke-width: 1px;
+	opacity: 0.9;
+}
+
+

@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>hzhu349 Q6</title>
+</head>
+<body>
+  <style>
+
+
+
+.title {
+  text-align: center;
+  padding-bottom: 60px;
+  font-size: 22px;
+  font-weight: 400;
+}
+
+.legend {
+            padding: 5px;
+            font: 10px sans-serif;
+            background: yellow;
+            box-shadow: 2px 2px 1px #888;
+        }
+
+.d3-tip {
+  line-height: .5;
+  font-weight: bold;
+  padding: 0px 8px;
+background: rgba(125, 125, 25, 0.8); 
+  color: #444;
+  border-radius: 10px;
+  border: 2px solid #444;
+}
+
+
+
+.body {
+  font-family: 'Open Sans', sans-serif;
+  font-size: 12px;
+  background-color: #fff;
+  width: 960px;
+  height: 800px;
+  margin-top: 10px;
+}
+
+#charts{
+  float: left;
+}
+
+.chart {
+  height: 100px;
+  margin-bottom: 20px;
+}
+
+.reset {
+  padding-left: 1em;
+  font-size: smaller;
+  color: blue;
+}
+
+.county-borders {
+  fill: none;
+  stroke: #fff;
+  stroke-width: 0.5px;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+  pointer-events: none;
+}
+
+.path {
+  stroke: #fff;
+}
+
+
+
+.counties {
+  fill: none;
+  stroke: #C0C0C0;
+  stroke-linejoin: round;
+}
+
+<div id="map">
+  <div id="map-legend">
+    <br>
+    <div class="title">Education Statisticss
+      <div class="title">0% . . . . . . . . . . . . . . . . . +100%</div>
+    </div>
+  </div>
+</div>
+
+
+#map-legend{
+  text-align: center; 
+}
+  </style>
+
+<script src="../lib/d3.v3.min.js"></script>
+<script src='../lib/topojson.v1.min.js'></script>
+<script src="../lib/d3.tip.v0.6.3.js"></script>
+<script src="../lib/d3-queue.v3.min.js"></script>
+<script type="text/javascript">
+
+
+var width = 1200;
+var height = 1200;
+
+var svg = d3.select("body").append("svg")
+    .attr("width", width )
+    .attr("height", height );
+
+
+
+var path = d3.geo.path();
+
+var g= svg.append("g")
+        .attr("transform", "translate(60,30)")
+
+
+
+
+var quantize = d3.scale.quantize()
+    .domain([-.02, .05])
+    .range(d3.range(9).map(function(i) { return "q" + i + "-9"; }));
+
+
+
+var mapcolor=d3.scale.threshold()
+    .domain([0,10,20,30,40,50,60,70,80,90])
+    .range([ "#cfddef"
+, "#c1d2ea"
+, "#b2c8e5"
+, "#a3bde0"
+, "#95b2dc"
+, "#85a8d7"
+, "#779dd2"
+,"#6892cd "
+,"#5a88c8"
+, "#4b8ac3"]);
+
+var legend = g.selectAll("legend")
+  .data([0,10,20,30,40,50,60,70,80,90])
+  .attr("width",20)
+  .attr("height",20)
+  .style("font-size","4s0px")
+  .attr("class","legend")
+  .enter().append("g")
+
+legend.append("rect")
+  .attr("width", 25)
+  .attr("height", 40)
+  .attr("class", "legend")
+  .attr("x", 950)
+  .attr("y", function(d, i){ return i*40})
+  .style("fill", function(d, i) {return mapcolor(d); })
+
+
+legend.append("text")
+  .attr("class", "legend")
+  .attr("x", 990 )
+  .attr("y", function(d, i){ return i*40+8})
+  .text(function(d){return d + "%"});
+
+svg.append("text")
+        .attr("class","title")
+        .attr("x", 600)             
+        .attr("y", 35)
+        .attr("text-anchor", "middle")  
+        .style("font-size", "30px") 
+        .style("text-decoration", "underline")  
+        .text("Education Statistics");
+
+
+
+d3.queue()
+    .defer(d3.json, "us.json")
+    .defer(d3.csv, "education.csv")
+    .defer(d3.csv, "education_details.csv")
+    .await(render);
+
+function render(error,us,education,details){
+
+    qualifiedPro={};
+    highschool={};
+    middleschool={};
+    details.forEach(function(d){
+    qualifiedPro[d.id] = d.qualified_professionals
+    highschool[d.id] = d.high_school
+    middleschool[d.id] = d.middle_school_or_lower
+    });      
+    
+
+    percentageMap={};
+    nameMap={}
+    education.forEach(function(d){
+      percentageMap[d.id] = +d.percent_educated
+      nameMap[d.id] = d.name
+    });
+
+
+
+  var div=d3.tip()
+    .attr("class","d3-tip ")
+    .html(
+    function(d){
+      return "<p>County: "+nameMap[d.id]+"</p><p>Percentaged Educated: " + d.percent_educated+"%"+"</p><p>Qualified Professionals: "+d.qualified_professionals +"</p><p >High school graduates: "+highschool[d.id]+"</p><p>Middle school or lower graduates: "+middleschool[d.id]+"</p>"
+    });
+  
+  g.call(div)
+
+  g.append("g")
+  .attr("class", "county")
+  .selectAll("path")
+  .data(topojson.feature(us, us.objects.counties).features)
+  .enter()
+
+
+   
+        .append("path")
+        .attr("d", path)
+        .attr('fill',function(d){
+          return mapcolor(percentageMap[d.id])
+        })
+        .attr('stroke',"#000")
+        .attr("stroke-width",0.25)
+        .attr("stroke-linejoin","round")
+        .on('mouseover',div.show)
+        .on('mouseout',div.hide)
+
+
+    
+  }
+
+</script>
+</body>
+</html>
+

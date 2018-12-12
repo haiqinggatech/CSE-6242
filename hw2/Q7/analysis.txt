@@ -1,0 +1,40 @@
+1. Ease to develop (for developers)
+    - Python: Easy for poltting with a good python opensource package
+
+    - Matlab: Easy for plotting with little coding work
+
+    - Tableau: Easy for plotting. No code required
+
+    - D3: Maybe the most difficult one to plot with 
+
+2. Ease to maintain the visualization (for developers)
+    - Python: Easy to maintain with the good package to work on it
+
+    - Matlab: Another easy one to maintain
+
+    - Tableau: The most easy one to maintain with no coding required. 
+
+    - D3: The diffcult one to main. It required a lot of debugging if something goes wrong. 
+
+3. Usability of visualization developed (for end users)
+   Python, Tableau and D3 are almost the same for the endusers.
+
+    - D3: The best one. Very interactive and beautiful
+
+4. Scalability of visualization to "large" datasets
+    - Python: Difficult 
+
+    - Matlab: Medium. 
+
+    - Tableau: Easy 
+
+    - D3: Difficult
+
+5. System requirements to run the visualization (e.g., browsers, OS, software licensing)(for end users)
+    - Python: Browser 
+
+    - Matlab: Software Licensing.
+
+    - Tableau: Software Licensing
+
+    - D3: Browser 

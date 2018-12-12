@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title> hzhu349</title>
+</head>
+<style type="text/css">
+  .axis path,
+  .axis line {
+    fill: none;
+    stroke: white;
+    shape-rendering: crispEdges;
+  }
+  .cell {
+        stroke:white;
+        stroke-width:2px;   
+      }
+   .mono {
+        font-size: 9pt;
+        font-family: Consolas, courier;
+        font-weight:bold;
+        fill:black;
+      }
+   
+  .axis text {
+      font-family: Consolas;
+      font-size: 14px;
+    }
+  
+.title {
+  text-align: center;
+  padding-bottom: 20px;
+  font-size: 22px;
+  font-weight: 400;
+}
+
+.legend {
+            padding: 10px;
+            font: 20px sans-serif;
+            background: white;
+            font-weight:bold;
+
+        }
+ .tick line {
+        display:none;
+    }
+
+
+.d3-tip {
+  line-height: .5;
+  font-weight: bold;
+  padding: 0px 8px;
+background: rgba(125, 125, 25, 0.8); 
+  color: #444;
+  border-radius: 10px;
+  border: 2px solid #444;
+}
+
+
+
+.body {
+  font-family: "Open Sans", sans-serif;
+  font-size: 11px;
+  background-color: #fff;
+  width: 960px;
+  height: 800px;
+  margin-top: 10px;
+
+  
+
+}
+
+#charts{
+  float: left;
+}
+
+.chart {
+  height: 100px;
+  margin-bottom: 20px;
+}
+
+.reset {
+  padding-left: 1em;
+  font-size: smaller;
+  color: blue;
+}
+
+.county-borders {
+  fill: none;
+  stroke: #fff;
+  stroke-width: 0.5px;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+  pointer-events: none;
+}
+
+.path {
+  stroke: #fff;
+}
+
+
+
+
+</style>
+<body>
+
+  <div class="custom-select" align="center" style= "width:1000px;" text-align-last:"center;"> 
+    
+    <p  style="text-align:center;"><center><strong>Vizualizing Wizarding Houses and Spells<strong></center></p>
+
+    <p>House
+    <select>
+      <option value="Gryffindor">Gryffindor</option>
+      <option value="Hufflepuff">Hufflepuff</option>
+      <option value="Ravenclaw">Ravenclaw</option>
+      <option value="Slytherin">Slytherin</option>
+    </select>
+  </div>
+
+
+
+  <div style= "width:1000px" class ="heatmap"></div>
+
+  <div style= "width:1000px" class ="legend">
+  </div>
+
+  <script src="../lib/d3.v3.min.js"></script>
+
+  <script type="text/javascript">
+
+  color=["#ffffd9","#edf8b1","#c7e9b4","#7fcdbb","#41b6c4","#1d91c0","#225ea8","#253494","#081d58"];
+
+    var svg = d3.select(".heatmap")
+    .append("svg")
+    .attr("width",1000)
+    .attr("height",600);
+    
+
+
+    var legend = d3.select(".legend").append("svg")
+            .attr("width",1000)
+            .attr("height",400)
+        .attr("class","legend")
+
+    var g = svg.append("g")
+    .attr("transform","translate(140,10)");
+
+        svg.append("text")
+        .attr("transform", "translate(150,595)")
+        .text("No. of Spells");
+   
+
+    legend.selectAll("rect")
+      .data(color)
+      .enter()
+      .append("rect")
+      .attr("width", 80)
+      .attr("height", 30)
+      .attr("x",function(d,i){
+        return i*80+100;
+        })
+      .attr("fill", function(d){return d});
+
+          g.append("text")
+            .attr("y", 5)
+            .attr("x", -100)
+            .attr("class","legend")
+            .text("Book");
+        g.append("text")
+            .attr("x", 502)
+            .attr("y", 420)
+            .attr("class","legend")
+            .text("Spell Type");
+
+
+
+
+
+
+    spellType=["Charm","Conjuration","Counter Spell","Curse","Healing Spell","Hex","Jinx","Transfiguration"]
+    bookList =["Sorcerer's Stone","Chamber of Secrets","Prisoner of Azkaban","Goblet of Fire","Order of the Phoenix","Half Blood Prince","Deathly Hallows"]
+   x = d3.scale.ordinal()
+          .domain(spellType)
+          .rangePoints([0, 440])
+          
+ y = d3.scale.ordinal()
+          .domain(bookList)
+          .rangePoints([0, 380])
+       Gryffindor=[];
+       Hufflepuff=[];
+       Ravenclaw=[];
+       Slytherin=[];
+
+
+    d3.csv("heatmap.csv",function(data){
+      input = [];
+      input.push(data);
+      data.forEach(function (d){
+        var data1={"value":+d["Sorcerer's Stone"], "book":"Sorcerer's Stone", "SpellType":d["SpellType"],"House":d["House"] };
+        var data2={"value":+d["Chamber of Secrets"],"book":"Chamber of Secrets","SpellType":d["SpellType"],"House":d["House"]};
+        var data3={"value":+d["Prisoner of Azkaban"],"book":"Prisoner of Azkaban","SpellType":d["SpellType"],"House":d["House"]};
+        var data4={"value":+d["Goblet of Fire"],"book":"Goblet of Fire","SpellType":d["SpellType"],"House":d["House"]};
+        var data5={"value":+d["Order of the Phoenix"],"book":"Order of the Phoenix","SpellType":d["SpellType"],"House":d["House"]};
+        var data6={"value":+d["Half Blood Prince"], "book":"Half Blood Prince","SpellType":d["SpellType"],"House":d["House"]};
+        var data7={"value":+d["Deathly Hallows"], "book":"Deathly Hallows","SpellType":d["SpellType"], "House":d["House"]};
+        if(d["House"]=="Gryffindor")  Gryffindor.push(data1,data2,data3,data4,data5,data6,data7)
+        if (d["House"]=="Hufflepuff") Hufflepuff.push(data1,data2,data3,data4,data5,data6,data7)
+        if(d["House"]=="Ravenclaw") Ravenclaw.push(data1,data2,data3,data4,data5,data6,data7)
+        if(d["House"]=="Slytherin") Slytherin.push(data1,data2,data3,data4,data5,data6,data7)
+
+
+      })
+
+
+      var draw = d3.select("select")
+              .attr("class","select")
+              .on("change",function(){
+              house = d3.select("select").property("value");
+                render(house)
+              });
+
+
+       render("Gryffindor")
+
+
+      function render(house){
+        svg.selectAll(".cell").remove();
+        legend.selectAll(".legendtext").remove();
+        console.log(legend.selectAll(".legendtext"))
+        if(house == "Gryffindor") temp=Gryffindor;
+        if(house == "Ravenclaw")  temp=Ravenclaw;
+        if(house == "Hufflepuff") temp=Hufflepuff;
+          if(house == "Slytherin") temp=Slytherin;
+
+
+        colorRange = d3.extent(temp,function(d){return d.value});
+
+        length = colorRange[1] - colorRange[0];
+        
+
+
+        step=colorRange[0];
+        colorIndex=[];
+        i=0;
+        while(i<9)
+        {
+          step=(step+length/9);
+          colorIndex.push(step);
+          i++;
+        }
+           colorScale=d3.scale.threshold()
+                          .domain(colorIndex)
+                          .range(color)
+
+
+
+        g.selectAll(".cell")
+          .data(temp)
+          .enter()
+          .append("rect")
+          .attr("class","cell")
+          .attr("x",function(d){
+                return x(d.SpellType)
+              })
+          .attr("y",function(d){
+                return y(d.book)
+              })
+          .attr("width", 60 )
+          .attr("height", 60)
+          .attr("fill",function(d){
+
+            if (d.value < colorIndex[0]) return color[0];
+            if (d.value < colorIndex[1]) return color[1]
+            if(d.value < colorIndex[2])  return color[2]
+            if(d.value < colorIndex[3])   return color[3]
+            if(d.value < colorIndex[4])   return color[4]
+            if(d.value < colorIndex[5])  return color[5]
+            if(d.value < colorIndex[6]) return color[6]
+            if(d.value < colorIndex[7]) return color[7]
+            if(d.value < colorIndex[8]) return color[8]
+          });
+
+
+
+
+        legend.selectAll("text")         
+          .data(colorIndex)
+          .enter()
+          .append("text")
+          .attr("class","body")
+          .text(function(d){
+            console.log(Math.round(d,2))
+            return Math.round(d,2)-13;
+          })
+          .attr("x",function(d,i){
+            return i*80+110;
+          })
+          .attr("y",50);
+        }
+
+
+
+
+    var xAxis = d3.svg.axis()
+        .scale(x)
+        .tickFormat(function (d) {
+            return d;
+        })
+        .orient("top");
+
+      svg.append("g")
+        .attr("class", "body")
+        .call(xAxis)
+        .selectAll('text')
+        .attr("dx", "-45em")
+        .attr("dy", "15em")
+        .attr('transform', 'translate(150,500)')
+        .attr("transform", "rotate(270)");
+
+    
+    var x_elements = d3.set(data.map(function( item ) { return spellType; } )).values(),
+        y_elements = d3.set(data.map(function( item ) { return bookList; } )).values();
+
+
+      var yAxis = d3.svg.axis()
+        .scale(y)
+        .tickFormat(function (d) {
+            return d;
+        })
+        .orient("left");
+
+      svg.append("g")
+        .attr("class", "body")
+        .call(yAxis)
+        .selectAll('text')
+        .attr("x", 120)
+        .attr("y", 50);
+        
+
+
+
+
+    })
+
+  </script>
+
+</body>
+</html>

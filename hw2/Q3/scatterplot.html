@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>
+    hzhu349 Q3
+  </title>
+</head>
+<body>
+<script src="../lib/d3.v3.min.js"></script>
+
+  <div id ="chart1">  </div>
+  <div id ="chart2">  </div>
+  <div id ="chart3">  </div>
+  <div id ="chart4">  </div>
+  <div id ="chart5">  </div>
+
+
+  <script type="text/javascript">
+    
+
+
+
+
+    d3.csv("movies.csv",function(data){
+    var badRating= [];
+    var goodRating= [];
+
+    data.forEach(function(d){
+
+      if(d.IsGoodRating == "0"){
+        badRating.push(d);
+      }
+
+      if (d.IsGoodRating == "1"){
+        goodRating.push(d);
+
+      }
+      d.imdbRating=+d.imdbRating;
+      d.Budget=+d.Budget;
+     
+      d.WinsNoms=+d.WinsNoms;
+      d.imdbVotes=+d.imdbVotes;
+    });
+
+ // part 1 chart 1 & chart 2
+    var svg1 = d3.select("#chart1").append("svg")
+    .attr("width",1200)
+    .attr("height",1000)
+
+    var g1 = svg1.append("g")
+     .attr("transform","translate(100,50)");
+
+    g1.append("path")
+      .attr("d",d3.svg.symbol().type("cross"))
+      .attr("transform", "translate(1010,35)")
+      .attr("fill","None")
+      .attr("stroke","Blue")
+     g1.append("text")
+        .text("bad rating")
+        .attr("x", 1030)
+        .attr("y", 25)
+        .attr("font-size", "15px");
+    g1.append("circle")
+      .attr("cx",1010)
+      .attr("cy",20)
+      .attr("stroke","Red")
+      .attr("fill","none")
+      .attr("r",6);
+    g1.append("text")
+        .text("good rating")
+        .attr("x", 1030)
+        .attr("y", 40)
+        .attr("font-size", "15px");
+
+    var rating = d3.scale.linear()
+    .domain(d3.extent(data,function(d){return d.imdbRating}))
+    .range([0, 1000]);
+    var winAndnom = d3.scale.linear()
+    .domain(d3.extent(data,function(d){return d.WinsNoms}))
+    .range([800, 0]);
+
+    g1.selectAll("path")
+      .data(goodRating)
+      .enter()
+      .append("path")
+      .attr("d",d3.svg.symbol().type("cross"))
+      .attr("transform", function(d) { return "translate(" + rating(d.imdbRating) + "," + winAndnom(d.WinsNoms) + ")"; })
+      .attr("fill","None")
+      .attr("stroke","Blue");
+
+
+    g1.selectAll("circle")
+      .data(badRating)
+      .enter()
+      .append("circle")
+      .attr("cx",function(d){return rating(d.imdbRating)})
+      .attr("cy",function(d){return winAndnom(d.WinsNoms)})
+      .attr("stroke","Red")
+      .attr("fill","None")
+      .attr("r",6);
+
+    g1.append("g")
+        .attr("class", "x axis")
+        .attr("transform", "translate(-5,800)")
+        .call(d3.svg.axis().scale(rating));
+
+      g1.append("g")
+        .attr("class", "y axis")
+        .call(d3.svg.axis().scale(winAndnom).orient("left"))
+
+
+    g1.append("text")
+        .attr("y", 820)
+        .attr("x", 1000)
+        .text("IMDb Rating");
+
+     g1.append("text")
+        .attr("y", 20)
+        .attr("x", -100)
+        .attr("transform", "rotate(-90)")
+        .text("Wins+Noms");
+
+    svg1.append("text")
+        .text("Wins+Nominations vs. IMDb Rating")
+        .attr("x",450)
+        .attr("y",25)
+        .style("text-anchor", "start")
+        .style("fill", "#004669")
+        .style("font-weight", "bold")
+        .style("font-size", "34px")
+
+
+     var svg2 = d3.select("#chart2").append("svg")
+    .attr("width",1200)
+    .attr("height",1000)
+
+    var g2 = svg2.append("g")
+    .attr("transform","translate(120,50)");
+
+    var budget = d3.scale.linear()
+    .domain(d3.extent(data,function(d){return d.Budget}))
+    .range([800,0]);
+
+
+
+
+
+
+
+
+    g2.append("path")
+      .attr("d",d3.svg.symbol().type("cross"))
+      .attr("transform", "translate(990,30)")
+      .attr("fill","None")
+      .attr("stroke","Blue")
+     g2.append("text")
+        .text("bad rating")
+        .attr("x", 1000)
+        .attr("y", 20)
+        .attr("font-size", "15px");
+    g2.append("circle")
+      .attr("cx",990)
+      .attr("cy",15)
+      .attr("stroke","Red")
+      .attr("fill","none")
+      .attr("r",6);
+    g2.append("text")
+        .text("good rating")
+        .attr("x", 1000)
+        .attr("y", 35)
+        .attr("font-size", "15px");
+
+      g2.selectAll("path")
+      .data(goodRating)
+      .enter()
+      .append("path")
+      .attr("d",d3.svg.symbol().type("cross"))
+      .attr("transform", function(d) { return "translate(" + rating(d.imdbRating) + "," + budget(d.Budget) + ")"; })
+      .attr("fill","None")
+      .attr("stroke","Blue");
+
+
+    g2.selectAll("circle")
+      .data(badRating)
+      .enter()
+      .append("circle")
+      .attr("cx",function(d){return rating(d.imdbRating)})
+      .attr("cy",function(d){return budget(d.Budget)})
+      .attr("stroke","Red")
+      .attr("fill","None")
+      .attr("r",6);
+
+    g2.append("g")
+        .attr("class", "x axis")
+        .attr("transform", "translate(-5,799)")
+        .call(d3.svg.axis().scale(rating).orient("bottom"))
+
+
+  g2.append("g")
+        .attr("class", "y axis")
+        .call(d3.svg.axis().scale(budget).orient("left"))
+
+
+
+  g2.append("text")
+        .attr("y", 790)
+        .attr("x", 980)
+        .text("IMDb Rating");
+
+    svg2.append("text")
+        .text("Budget vs. IMDb Rating")
+        .attr("x",450)
+        .attr("y",25)
+        .style("text-anchor", "start")
+        .style("fill", "#004669")
+        .style("font-weight", "bold")
+        .style("font-size", "34px")
+
+    g2.append("text")
+        .attr("y", 20)
+        .attr("x", -50)
+        .attr("transform", "rotate(-90)")
+        .text("Budget");
+
+
+// part b. chart 3
+
+    var bluecross = d3.scale.linear()
+    .domain(d3.extent(goodRating,function(d){return d.WinsNoms}))
+    .range([60, 150]);
+
+
+    var circle = d3.scale.linear()
+    .domain(d3.extent(badRating,function(d){return d.WinsNoms}))
+    .range([4, 10]);
+
+    var vote = d3.scale.linear()
+    .domain(d3.extent(data,function(d){return d.imdbVotes}))
+    .range([800,0]);
+
+    var svg3 = d3.select("#chart3").append("svg")
+    .attr("width",1200)
+    .attr("height",1000)
+
+    var g3 = svg3.append("g")
+     .attr("transform","translate(100,40)");
+
+    g3.append("path")
+      .attr("d",d3.svg.symbol().type("cross"))
+      .attr("transform", "translate(60,15)")
+      .attr("fill","None")
+      .attr("stroke","Blue")
+    g3.append("circle")
+      .attr("cx",60)
+      .attr("cy",0)
+      .attr("stroke","Red")
+      .attr("fill","none")
+      .attr("r",6);
+    g3.append("text")
+        .attr("x", 80)
+        .attr("y", 20)
+        .text("good rating")
+        
+        ;
+    g3.append("text")
+        .attr("x", 80)
+        .attr("y", 5)
+        .text("bad rating");
+
+
+
+
+
+    g3.selectAll("path")
+      .data(goodRating)
+      .enter()
+      .append("path")
+      .attr("d",d3.svg.symbol().type("cross").size(function(d){
+        return bluecross(d.WinsNoms);
+      }))
+      .attr("transform", function(d) { return "translate(" + rating(d.imdbRating) + "," + vote(d.imdbVotes) + ")"; })
+      .attr("fill","None")
+      .attr("stroke","Blue");
+
+
+    g3.selectAll("circle")
+      .data(badRating)
+      .enter()
+      .append("circle")
+      .attr("cx",function(d){return rating(d.imdbRating)})
+      .attr("cy",function(d){return vote(d.imdbVotes)})
+      .attr("stroke","Red")
+      .attr("fill","None")
+      .attr("r",function(d){
+        return circle(d.WinsNoms);
+      });
+
+    g3.append("g")
+        .attr("class", "x axis")
+        .attr("transform", "translate(-5, 800)")
+        .call(d3.svg.axis().scale(rating).orient("bottom"));
+
+      g3.append("g")
+        .attr("class", "y axis")
+        .call(d3.svg.axis().scale(vote).orient("left"));
+
+
+      g3.append("text")
+        .attr("y", 790)
+        .attr("x", 980)
+        .text("IMDb Rating");
+
+    svg3.append("text")
+        .text("Votes vs. IMDb Rating")
+        .attr("x",450)
+        .attr("y",25)
+        .style("text-anchor", "start")
+        .style("fill", "#004669")
+        .style("font-weight", "bold")
+        .style("font-size", "34px");
+
+    g3.append("text")
+        .attr("y", 20)
+        .attr("x", -100)
+        .attr("transform", "rotate(-90)")
+        .text("IMDb Votes");
+
+// part c Figure 4 and Fiugre 5
+
+    var winSQRT = d3.scale.sqrt()
+    .domain(d3.extent(data,function(d){return d.WinsNoms}))
+    .range([800,0]);
+
+    var win = d3.scale.linear()
+    .domain(d3.extent(data,function(d){return d.WinsNoms}))
+    .range([.01,d3.max(data,function(d){return d.WinsNoms})]);
+
+    var winLog = d3.scale.log()
+    .domain([.01,d3.max(data,function(d){return d.WinsNoms})])
+    .range([800,0]);
+
+    var svg4 = d3.select("#chart4").append("svg")
+    .attr("width",1200)
+    .attr("height",1000)
+
+    var g4 = svg4.append("g")
+    .attr("transform","translate(100,40)");
+
+    var svg5 = d3.select("#chart5").append("svg")
+    .attr("width",1200)
+    .attr("height",1000)
+
+    var g5 = svg5.append("g")
+   .attr("transform","translate(100,40)");
+
+    g4.append("path")
+      .attr("d",d3.svg.symbol().type("cross"))
+      .attr("transform", "translate(60,30)")
+      .attr("fill","None")
+      .attr("stroke","Blue")
+    g4.append("circle")
+      .attr("cx",60)
+      .attr("cy",15)
+      .attr("stroke","Red")
+      .attr("fill","none")
+      .attr("r",6);
+    g4.append("text")
+        .text("good rating")
+        .attr("x", 80)
+        .attr("y", 35);
+    g4.append("text")
+        .text("bad rating")
+        .attr("x", 80)
+        .attr("y", 20);
+
+
+    g4.selectAll("path")
+      .data(goodRating)
+      .enter()
+      .append("path")
+      .attr("d",d3.svg.symbol().type("cross").size(70))
+      .attr("transform", function(d) { return "translate(" + rating(d.imdbRating) + "," + winSQRT(d.WinsNoms) + ")"; })
+      .attr("fill","None")
+      .attr("stroke","Blue")
+
+
+    g4.selectAll("circle")
+      .data(badRating)
+      .enter()
+      .append("circle")
+      .attr("cx",function(d){return rating(d.imdbRating)})
+      .attr("cy",function(d){return winSQRT(d.WinsNoms)})
+      .attr("stroke","Red")
+      .attr("fill","None")
+      .attr("r",6)
+
+    g4.append("g")
+        .attr("class", "x axis")
+        .attr("transform", "translate(-5,800)")
+        .call(d3.svg.axis().scale(rating).orient("bottom"));
+
+      g4.append("g")
+        .attr("class", "y axis")
+        .call(d3.svg.axis().scale(winSQRT).orient("left"));
+
+
+ 
+    g4.append("text")
+        .attr("x", 980)
+        .attr("y", 790)
+        .text("IMDb Rating");
+
+    svg4.append("text")
+        .text("Wins+Nominations (square-root-scaled) vs. IMDb Rating")
+        .attr("x",150)
+        .attr("y",25)
+        .style("text-anchor", "start")
+        .style("fill", "#004669")
+        .style("font-weight", "bold")
+        .style("font-size", "34px");
+
+    g4.append("text")
+        .attr("y", 20)
+        .attr("x", -100)
+        .attr("transform", "rotate(-90)")
+        .text("Wins+Noms");
+
+      
+    g5.append("path")
+      .attr("d",d3.svg.symbol().type("cross"))
+      .attr("transform", "translate(60,30)")
+      .attr("fill","None")
+      .attr("stroke","Blue")
+    g5.append("circle")
+      .attr("cx",60)
+      .attr("cy",15)
+      .attr("stroke","Red")
+      .attr("fill","none")
+      .attr("r",6);
+    g5.append("text")
+        .text("good rating")
+        .attr("x", 80)
+        .attr("y", 35);
+    g5.append("text")
+        .text("bad rating")
+        .attr("x", 80)
+        .attr("y", 20);
+
+    g5.selectAll("path")
+      .data(goodRating)
+      .enter()
+      .append("path")
+      .attr("d",d3.svg.symbol().type("cross").size(70))
+      .attr("transform", function(d) { 
+        return "translate(" + rating(d.imdbRating) + "," + winLog(win(d.WinsNoms)) + ")"; 
+      })
+      .attr("fill","None")
+      .attr("stroke","Blue")
+
+
+    g5.selectAll("circle")
+      .data(badRating)
+      .enter()
+      .append("circle")
+      .attr("cx",function(d){return rating(d.imdbRating)})
+      .attr("cy",function(d){return winLog(win(d.WinsNoms))})
+      .attr("stroke","Red")
+      .attr("fill","None")
+      .attr("r",6)
+
+    g5.append("g")
+        .attr("class", "x axis")
+        .attr("transform", "translate(-10,800)")
+        .call(d3.svg.axis().scale(rating).orient("bottom"));
+
+      g5.append("g")
+        .attr("class", "y axis")
+        .attr("transform", "translate(-5,0)")
+        .call(d3.svg.axis().scale(winLog).orient("left"));
+
+    g5.append("text")
+        .attr("x", 980)
+        .attr("y", 790)
+        .text("IMDb Rating");
+
+    svg5.append("text")
+        .text("Wins+Nominations (log-scaled) vs. IMDb Rating")
+        .attr("x",250)
+        .attr("y",25)
+        .style("text-anchor", "start")
+        .style("fill", "#004669")
+        .style("font-weight", "bold")
+        .style("font-size", "34px");
+
+    g5.append("text")
+        .attr("y", 20)
+        .attr("x", -100)
+        .attr("transform", "rotate(-90)")
+        .text("Wins+Noms");
+});
+
+</script>
+
+
+
+</body>
+</html>

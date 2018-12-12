@@ -1,0 +1,9 @@
+
+
+
+1. Layout of Force Altas with default settings was applied to the data to cluster nodes appropriately
+
+
+2. Size of nodes and labels was adjusted based on degree to highlight the most important nodes 
+
+3. Giant Component and Degree range filter had been applied to filter non-important data
